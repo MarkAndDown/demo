@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Button Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #1e1e1e;
+            color: #e1e1e1;
+        }
+        .btn-icon {
+            background: none;
+            border: none;
+            color: #888;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+        .btn-icon:hover {
+            background: #404040;
+            color: #ff6b35;
+        }
+        .test-result {
+            margin-top: 20px;
+            padding: 10px;
+            background: #2d2d2d;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Button Test</h1>
+    
+    <button id="newCollectionBtn" class="btn-icon" title="New Collection">
+        <i>+</i> New Collection
+    </button>
+    
+    <button id="importCollectionBtn" class="btn-icon" title="Import Collection">
+        <i>↓</i> Import Collection
+    </button>
+    
+    <div id="testResult" class="test-result">
+        <h3>Test Results:</h3>
+        <div id="resultContent">No tests run yet.</div>
+    </div>
+
+    <script>
+        // Simple test functions
+        function showNewCollectionModal() {
+            console.log('showNewCollectionModal called');
+            document.getElementById('resultContent').innerHTML += '<p>✓ New Collection button clicked</p>';
+        }
+        
+        function importCollectionFromFile() {
+            console.log('importCollectionFromFile called');
+            document.getElementById('resultContent').innerHTML += '<p>✓ Import Collection button clicked</p>';
+        }
+        
+        // Bind events
+        document.getElementById('newCollectionBtn').addEventListener('click', () => {
+            console.log('New Collection button clicked');
+            showNewCollectionModal();
+        });
+        
+        document.getElementById('importCollectionBtn').addEventListener('click', () => {
+            console.log('Import Collection button clicked');
+            importCollectionFromFile();
+        });
+        
+        console.log('Test page loaded');
+        document.getElementById('resultContent').innerHTML = '<p>✓ Page loaded, buttons ready for testing</p>';
+    </script>
+</body>
+</html> 

@@ -1,0 +1,83 @@
+{
+	"info": {
+		"_postman_id": "3e23a5aa-5700-4b3e-94a2-5223e53decc9",
+		"name": "123",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "https://poe.ninja/api/data/ItemOverview?league=Scourge&type=DivinationCard&language=en",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://poe.ninja/api/data/ItemOverview?league=Scourge&type=DivinationCard&language=en",
+					"protocol": "https",
+					"host": [
+						"poe",
+						"ninja"
+					],
+					"path": [
+						"api",
+						"data",
+						"ItemOverview"
+					],
+					"query": [
+						{
+							"key": "league",
+							"value": "Scourge"
+						},
+						{
+							"key": "type",
+							"value": "DivinationCard"
+						},
+						{
+							"key": "language",
+							"value": "en"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "localhost:8080/sso/jwt_login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "username",
+							"value": "ys1234",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "ys12345678",
+							"type": "text"
+						}
+					],
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/sso/jwt_login",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"sso",
+						"jwt_login"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

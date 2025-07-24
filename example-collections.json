@@ -1,0 +1,275 @@
+{
+  "collections": [
+    {
+      "id": 1,
+      "name": "User Management API",
+      "description": "User registration, login, and profile management interfaces",
+      "requests": [
+        {
+          "id": 101,
+          "name": "User Registration",
+          "method": "POST",
+          "url": "https://api.example.com/users/register",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": {
+            "type": "json",
+            "content": "{\n  \"username\": \"testuser\",\n  \"email\": \"test@example.com\",\n  \"password\": \"password123\",\n  \"confirmPassword\": \"password123\"\n}"
+          },
+          "tests": "pm.test(\"Registration successful\", function () {\n  pm.response.to.have.status(201);\n  const responseJson = pm.response.json();\n  pm.expect(responseJson).to.have.property('userId');\n  pm.expect(responseJson).to.have.property('message');\n});"
+        },
+        {
+          "id": 102,
+          "name": "User Login",
+          "method": "POST",
+          "url": "https://api.example.com/users/login",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": {
+            "type": "json",
+            "content": "{\n  \"email\": \"test@example.com\",\n  \"password\": \"password123\"\n}"
+          },
+          "tests": "pm.test(\"Login successful\", function () {\n  pm.response.to.have.status(200);\n  const responseJson = pm.response.json();\n  pm.expect(responseJson).to.have.property('token');\n  pm.expect(responseJson).to.have.property('user');\n});"
+        },
+        {
+          "id": 103,
+          "name": "Get User Profile",
+          "method": "GET",
+          "url": "https://api.example.com/users/profile",
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer {{token}}"
+            }
+          ],
+          "tests": "pm.test(\"Get user profile successful\", function () {\n  pm.response.to.have.status(200);\n  const responseJson = pm.response.json();\n  pm.expect(responseJson).to.have.property('id');\n  pm.expect(responseJson).to.have.property('username');\n  pm.expect(responseJson).to.have.property('email');\n});"
+        },
+        {
+          "id": 104,
+          "name": "Update User Profile",
+          "method": "PUT",
+          "url": "https://api.example.com/users/profile",
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer {{token}}"
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": {
+            "type": "json",
+            "content": "{\n  \"username\": \"newusername\",\n  \"bio\": \"This is my personal bio\"\n}"
+          },
+          "tests": "pm.test(\"Update user profile successful\", function () {\n  pm.response.to.have.status(200);\n  const responseJson = pm.response.json();\n  pm.expect(responseJson.username).to.eql('newusername');\n});"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Article Management API",
+      "description": "Article CRUD operations interfaces",
+      "requests": [
+        {
+          "id": 201,
+          "name": "Get Article List",
+          "method": "GET",
+          "url": "https://api.example.com/articles",
+          "params": [
+            {
+              "key": "page",
+              "value": "1"
+            },
+            {
+              "key": "limit",
+              "value": "10"
+            },
+            {
+              "key": "category",
+              "value": "technology"
+            }
+          ],
+          "tests": "pm.test(\"Get article list successful\", function () {\n  pm.response.to.have.status(200);\n  const responseJson = pm.response.json();\n  pm.expect(responseJson).to.have.property('articles');\n  pm.expect(responseJson.articles).to.be.an('array');\n  pm.expect(responseJson).to.have.property('total');\n  pm.expect(responseJson).to.have.property('page');\n});"
+        },
+        {
+          "id": 202,
+          "name": "Get Article Detail",
+          "method": "GET",
+          "url": "https://api.example.com/articles/{{articleId}}",
+          "tests": "pm.test(\"Get article detail successful\", function () {\n  pm.response.to.have.status(200);\n  const responseJson = pm.response.json();\n  pm.expect(responseJson).to.have.property('id');\n  pm.expect(responseJson).to.have.property('title');\n  pm.expect(responseJson).to.have.property('content');\n  pm.expect(responseJson).to.have.property('author');\n});"
+        },
+        {
+          "id": 203,
+          "name": "Create Article",
+          "method": "POST",
+          "url": "https://api.example.com/articles",
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer {{token}}"
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": {
+            "type": "json",
+            "content": "{\n  \"title\": \"My First Article\",\n  \"content\": \"This is the article content...\",\n  \"category\": \"technology\",\n  \"tags\": [\"JavaScript\", \"API\"]\n}"
+          },
+          "tests": "pm.test(\"Create article successful\", function () {\n  pm.response.to.have.status(201);\n  const responseJson = pm.response.json();\n  pm.expect(responseJson).to.have.property('id');\n  pm.expect(responseJson.title).to.eql('My First Article');\n});"
+        },
+        {
+          "id": 204,
+          "name": "Update Article",
+          "method": "PUT",
+          "url": "https://api.example.com/articles/{{articleId}}",
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer {{token}}"
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": {
+            "type": "json",
+            "content": "{\n  \"title\": \"Updated Article Title\",\n  \"content\": \"Updated article content...\"\n}"
+          },
+          "tests": "pm.test(\"Update article successful\", function () {\n  pm.response.to.have.status(200);\n  const responseJson = pm.response.json();\n  pm.expect(responseJson.title).to.eql('Updated Article Title');\n});"
+        },
+        {
+          "id": 205,
+          "name": "Delete Article",
+          "method": "DELETE",
+          "url": "https://api.example.com/articles/{{articleId}}",
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer {{token}}"
+            }
+          ],
+          "tests": "pm.test(\"Delete article successful\", function () {\n  pm.response.to.have.status(204);\n});"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "File Upload API",
+      "description": "File upload related interfaces",
+      "requests": [
+        {
+          "id": 301,
+          "name": "Upload Image",
+          "method": "POST",
+          "url": "https://api.example.com/upload/image",
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer {{token}}"
+            }
+          ],
+          "body": {
+            "type": "form",
+            "content": ""
+          },
+          "tests": "pm.test(\"Upload image successful\", function () {\n  pm.response.to.have.status(200);\n  const responseJson = pm.response.json();\n  pm.expect(responseJson).to.have.property('url');\n  pm.expect(responseJson).to.have.property('filename');\n});"
+        },
+        {
+          "id": 302,
+          "name": "Upload Document",
+          "method": "POST",
+          "url": "https://api.example.com/upload/document",
+          "headers": [
+            {
+              "key": "Authorization",
+              "value": "Bearer {{token}}"
+            }
+          ],
+          "body": {
+            "type": "form",
+            "content": ""
+          },
+          "tests": "pm.test(\"Upload document successful\", function () {\n  pm.response.to.have.status(200);\n  const responseJson = pm.response.json();\n  pm.expect(responseJson).to.have.property('url');\n  pm.expect(responseJson).to.have.property('size');\n});"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "Third-party API Testing",
+      "description": "Common third-party API test cases",
+      "requests": [
+        {
+          "id": 401,
+          "name": "Get Weather Information",
+          "method": "GET",
+          "url": "https://api.openweathermap.org/data/2.5/weather",
+          "params": [
+            {
+              "key": "q",
+              "value": "Beijing"
+            },
+            {
+              "key": "appid",
+              "value": "{{weatherApiKey}}"
+            },
+            {
+              "key": "units",
+              "value": "metric"
+            }
+          ],
+          "tests": "pm.test(\"Get weather information successful\", function () {\n  pm.response.to.have.status(200);\n  const responseJson = pm.response.json();\n  pm.expect(responseJson).to.have.property('name');\n  pm.expect(responseJson).to.have.property('main');\n  pm.expect(responseJson.main).to.have.property('temp');\n});"
+        },
+        {
+          "id": 402,
+          "name": "Translate Text",
+          "method": "POST",
+          "url": "https://translation.googleapis.com/language/translate/v2",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": {
+            "type": "json",
+            "content": "{\n  \"q\": \"Hello world\",\n  \"source\": \"en\",\n  \"target\": \"zh\",\n  \"key\": \"{{googleApiKey}}\"\n}"
+          },
+          "tests": "pm.test(\"Translation successful\", function () {\n  pm.response.to.have.status(200);\n  const responseJson = pm.response.json();\n  pm.expect(responseJson).to.have.property('data');\n  pm.expect(responseJson.data).to.have.property('translations');\n});"
+        }
+      ]
+    }
+  ],
+  "environments": {
+    "development": {
+      "baseUrl": "http://localhost:3000",
+      "token": "",
+      "weatherApiKey": "your_openweathermap_api_key",
+      "googleApiKey": "your_google_api_key"
+    },
+    "staging": {
+      "baseUrl": "https://staging-api.example.com",
+      "token": "",
+      "weatherApiKey": "your_openweathermap_api_key",
+      "googleApiKey": "your_google_api_key"
+    },
+    "production": {
+      "baseUrl": "https://api.example.com",
+      "token": "",
+      "weatherApiKey": "your_openweathermap_api_key",
+      "googleApiKey": "your_google_api_key"
+    }
+  }
+} 

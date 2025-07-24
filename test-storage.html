@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Storage Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #1e1e1e;
+            color: #e1e1e1;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            background: #2d2d2d;
+            border-radius: 8px;
+        }
+        button {
+            background: #ff6b35;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #e55a2b;
+        }
+        .result {
+            margin-top: 10px;
+            padding: 10px;
+            background: #404040;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+        .success { color: #28a745; }
+        .error { color: #dc3545; }
+    </style>
+</head>
+<body>
+    <h1>NB Man Storage Test</h1>
+    
+    <div class="test-section">
+        <h3>Test Data</h3>
+        <button onclick="saveTestData()">Save Test Data</button>
+        <button onclick="loadTestData()">Load Test Data</button>
+        <button onclick="clearTestData()">Clear Test Data</button>
+        <div id="testResult" class="result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>Current Storage Status</h3>
+        <button onclick="checkStorage()">Check Storage</button>
+        <div id="storageResult" class="result"></div>
+    </div>
+
+    <script>
+        const testData = {
+            collections: [
+                {
+                    id: 1,
+                    name: 'Test Collection',
+                    requests: [
+                        {
+                            id: 1,
+                            name: 'Test Request',
+                            method: 'GET',
+                            url: 'https://api.example.com/test'
+                        }
+                    ]
+                }
+            ],
+            history: [
+                {
+                    id: Date.now(),
+                    method: 'GET',
+                    url: 'https://api.example.com/test',
+                    timestamp: new Date().toISOString()
+                }
+            ],
+            environments: {
+                default: {},
+                test: { baseUrl: 'https://api.example.com' }
+            }
+        };
+
+        function showResult(elementId, message, isSuccess = true) {
+            const element = document.getElementById(elementId);
+            element.innerHTML = message;
+            element.className = `result ${isSuccess ? 'success' : 'error'}`;
+        }
+
+        function saveTestData() {
+            try {
+                const jsonData = JSON.stringify(testData);
+                localStorage.setItem('nbMan', jsonData);
+                showResult('testResult', `✓ Data saved successfully!\nSize: ${jsonData.length} bytes\nCollections: ${testData.collections.length}\nHistory: ${testData.history.length}`);
+            } catch (error) {
+                showResult('testResult', `✗ Failed to save data: ${error.message}`, false);
+            }
+        }
+
+        function loadTestData() {
+            try {
+                const data = localStorage.getItem('nbMan');
+                if (data) {
+                    const parsed = JSON.parse(data);
+                    showResult('testResult', `✓ Data loaded successfully!\nCollections: ${parsed.collections?.length || 0}\nHistory: ${parsed.history?.length || 0}\nEnvironments: ${Object.keys(parsed.environments || {}).length}`);
+                } else {
+                    showResult('testResult', '✗ No data found in localStorage', false);
+                }
+            } catch (error) {
+                showResult('testResult', `✗ Failed to load data: ${error.message}`, false);
+            }
+        }
+
+        function clearTestData() {
+            try {
+                localStorage.removeItem('nbMan');
+                showResult('testResult', '✓ Data cleared successfully!');
+            } catch (error) {
+                showResult('testResult', `✗ Failed to clear data: ${error.message}`, false);
+            }
+        }
+
+        function checkStorage() {
+            try {
+                const data = localStorage.getItem('nbMan');
+                const hasData = data !== null;
+                const size = data ? data.length : 0;
+                
+                let status = `Storage Status:\n`;
+                status += `Has data: ${hasData ? 'Yes' : 'No'}\n`;
+                status += `Data size: ${size} bytes\n`;
+                
+                if (hasData) {
+                    try {
+                        const parsed = JSON.parse(data);
+                        status += `Collections: ${parsed.collections?.length || 0}\n`;
+                        status += `History: ${parsed.history?.length || 0}\n`;
+                        status += `Environments: ${Object.keys(parsed.environments || {}).length}`;
+                    } catch (e) {
+                        status += `Parse error: ${e.message}`;
+                    }
+                }
+                
+                showResult('storageResult', status);
+            } catch (error) {
+                showResult('storageResult', `✗ Storage check failed: ${error.message}`, false);
+            }
+        }
+
+        // Auto-check storage on page load
+        window.onload = function() {
+            checkStorage();
+        };
+    </script>
+</body>
+</html> 

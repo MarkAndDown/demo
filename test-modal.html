@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modal Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #1e1e1e;
+            color: #e1e1e1;
+        }
+        .btn-icon {
+            background: none;
+            border: none;
+            color: #888;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+        .btn-icon:hover {
+            background: #404040;
+            color: #ff6b35;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+        .modal-content {
+            background-color: #2d2d2d;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #404040;
+            border-radius: 8px;
+            width: 80%;
+            max-width: 500px;
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .modal-close {
+            background: none;
+            border: none;
+            color: #888;
+            font-size: 24px;
+            cursor: pointer;
+        }
+        .modal-close:hover {
+            color: #ff6b35;
+        }
+        .test-result {
+            margin-top: 20px;
+            padding: 10px;
+            background: #2d2d2d;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Modal Test</h1>
+    
+    <button id="newCollectionBtn" class="btn-icon" title="New Collection">
+        <i>+</i> New Collection
+    </button>
+    
+    <div id="testResult" class="test-result">
+        <h3>Test Results:</h3>
+        <div id="resultContent">No tests run yet.</div>
+    </div>
+
+    <!-- Modal -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Title</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Modal content -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Test application class
+        class TestApp {
+            constructor() {
+                this.collections = [];
+                this.init();
+            }
+            
+            init() {
+                this.bindEvents();
+                console.log('Test app initialized');
+            }
+            
+            bindEvents() {
+                document.getElementById('newCollectionBtn').addEventListener('click', () => {
+                    console.log('New Collection button clicked');
+                    this.showNewCollectionModal();
+                });
+                
+                document.querySelector('.modal-close').addEventListener('click', () => {
+                    this.closeModal();
+                });
+                
+                document.getElementById('modal').addEventListener('click', (e) => {
+                    if (e.target.id === 'modal') {
+                        this.closeModal();
+                    }
+                });
+            }
+            
+            showNewCollectionModal() {
+                console.log('showNewCollectionModal called');
+                this.showModal('New Collection', `
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: 600;">Collection Name</label>
+                        <input type="text" id="collectionName" placeholder="Enter collection name" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                    </div>
+                    <div style="text-align: right;">
+                        <button id="createCollectionBtn" style="background: #ff6b35; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">Create</button>
+                    </div>
+                `);
+                
+                // Bind the create button event after modal is shown
+                setTimeout(() => {
+                    const createBtn = document.getElementById('createCollectionBtn');
+                    if (createBtn) {
+                        createBtn.addEventListener('click', () => {
+                            console.log('Create button clicked');
+                            this.createCollection();
+                        });
+                    } else {
+                        console.error('Create button not found');
+                    }
+                }, 100);
+            }
+            
+            createCollection() {
+                console.log('createCollection called');
+                const nameInput = document.getElementById('collectionName');
+                
+                if (!nameInput) {
+                    console.error('collectionName input not found');
+                    this.showResult('Error: Input field not found');
+                    return;
+                }
+                
+                const name = nameInput.value.trim();
+                console.log('Collection name:', name);
+                
+                if (!name) {
+                    this.showResult('Error: Please enter collection name');
+                    return;
+                }
+                
+                const collection = {
+                    id: Date.now(),
+                    name: name,
+                    requests: []
+                };
+                
+                console.log('Creating collection:', collection);
+                this.collections.push(collection);
+                this.closeModal();
+                this.showResult(`✓ Collection "${name}" created successfully`);
+            }
+            
+            showModal(title, content) {
+                console.log('showModal called with title:', title);
+                const modalTitle = document.getElementById('modalTitle');
+                const modalBody = document.getElementById('modalBody');
+                const modal = document.getElementById('modal');
+                
+                if (!modalTitle || !modalBody || !modal) {
+                    console.error('Modal elements not found');
+                    return;
+                }
+                
+                modalTitle.textContent = title;
+                modalBody.innerHTML = content;
+                modal.style.display = 'block';
+                console.log('Modal displayed');
+            }
+            
+            closeModal() {
+                document.getElementById('modal').style.display = 'none';
+            }
+            
+            showResult(message) {
+                document.getElementById('resultContent').innerHTML += '<p>' + message + '</p>';
+            }
+        }
+        
+        // Initialize test app
+        const testApp = new TestApp();
+        document.getElementById('resultContent').innerHTML = '<p>✓ Test app loaded, ready for testing</p>';
+    </script>
+</body>
+</html> 

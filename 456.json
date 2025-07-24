@@ -1,0 +1,92 @@
+{
+  "collections": [
+    {
+      "id": 1752944002077,
+      "name": "123",
+      "description": "",
+      "requests": [
+        {
+          "id": 1752944002077.6387,
+          "name": "https://poe.ninja/api/data/ItemOverview?league=Scourge&type=DivinationCard&language=en",
+          "method": "GET",
+          "url": "https://poe.ninja/api/data/ItemOverview?league=Scourge&type=DivinationCard&language=en",
+          "params": [
+            {
+              "key": "league",
+              "value": "Scourge",
+              "enabled": true
+            },
+            {
+              "key": "type",
+              "value": "DivinationCard",
+              "enabled": true
+            },
+            {
+              "key": "language",
+              "value": "en",
+              "enabled": true
+            }
+          ],
+          "headers": [],
+          "body": {
+            "type": "none"
+          },
+          "auth": {
+            "type": "bearer"
+          },
+          "description": ""
+        },
+        {
+          "id": 1752944002077.9648,
+          "name": "localhost:8080/sso/jwt_login",
+          "method": "POST",
+          "url": "http://localhost:8080/sso/jwt_login",
+          "params": [],
+          "headers": [],
+          "body": {
+            "type": "form",
+            "data": [
+              {
+                "key": "username",
+                "value": "ys1234",
+                "type": "text",
+                "enabled": true
+              },
+              {
+                "key": "password",
+                "value": "ys12345678",
+                "type": "text",
+                "enabled": true
+              }
+            ]
+          },
+          "auth": {
+            "type": "none",
+            "data": {}
+          },
+          "description": ""
+        }
+      ]
+    },
+    {
+      "id": 1752946906899,
+      "name": "dasdasd",
+      "requests": []
+    }
+  ],
+  "environments": {
+    "default": {},
+    "development": {
+      "baseUrl": "http://localhost:3000",
+      "apiKey": "dev-key-123"
+    },
+    "staging": {
+      "baseUrl": "https://staging-api.example.com",
+      "apiKey": "staging-key-456"
+    },
+    "production": {
+      "baseUrl": "https://api.example.com",
+      "apiKey": "prod-key-789"
+    }
+  }
+}

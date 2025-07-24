@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; font-src 'self' https://cdnjs.cloudflare.com; img-src 'self' data: https:; connect-src *;">
+    <title>NB Man - API Testing Tool</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Top Navigation Bar -->
+        <div class="top-nav">
+            <div class="nav-left">
+                <div class="app-logo">
+                    <i class="fas fa-bolt"></i>
+                    <span>NB Man</span>
+                </div>
+            </div>
+            <div class="nav-center">
+                <div class="request-bar">
+                    <div class="method-selector">
+                        <select id="methodSelect" class="method-select">
+                            <option value="GET">GET</option>
+                            <option value="POST">POST</option>
+                            <option value="PUT">PUT</option>
+                            <option value="DELETE">DELETE</option>
+                            <option value="PATCH">PATCH</option>
+                            <option value="HEAD">HEAD</option>
+                            <option value="OPTIONS">OPTIONS</option>
+                        </select>
+                    </div>
+                    
+                    <div class="url-input-container">
+                        <input type="text" id="urlInput" class="url-input" placeholder="Enter request URL...">
+                    </div>
+                    
+                    <button id="sendBtn" class="send-btn">
+                        <i class="fas fa-paper-plane"></i> Send
+                    </button>
+                </div>
+            </div>
+            <div class="nav-right">
+                <button id="saveBtn" class="nav-btn" title="Save to Collection">
+                    <i class="fas fa-save"></i>
+                </button>
+                <button id="duplicateBtn" class="nav-btn" title="Duplicate Request">
+                    <i class="fas fa-copy"></i>
+                </button>
+                <button id="settingsBtn" class="nav-btn" title="Settings">
+                    <i class="fas fa-cog"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="main-content">
+            <!-- Left Sidebar -->
+            <div class="left-sidebar">
+                <!-- Environment Selection -->
+                <div class="sidebar-section">
+                    <div class="section-header">
+                        <h3><i class="fas fa-cog"></i> Environment</h3>
+                        <button id="manageEnvBtn" class="btn-icon" title="Manage Environments">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                    </div>
+                    <select id="environmentSelect" class="environment-select">
+                        <option value="default">Default Environment</option>
+                        <option value="development">Development</option>
+                        <option value="staging">Staging</option>
+                        <option value="production">Production</option>
+                    </select>
+                </div>
+
+                <!-- Collections -->
+                <div class="sidebar-section">
+                    <div class="section-header">
+                        <h3><i class="fas fa-folder"></i> Collections</h3>
+                        <div class="collection-actions">
+                            <button id="importCollectionBtn" class="btn-icon" title="Import Collection">
+                                <i class="fas fa-download"></i>
+                            </button>
+                            <button id="newCollectionBtn" class="btn-icon" title="New Collection">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div id="collectionsList" class="collections-list">
+                        <!-- Collections will be dynamically displayed here -->
+                    </div>
+                </div>
+
+                <!-- History -->
+                <div class="sidebar-section">
+                    <div class="section-header">
+                        <h3><i class="fas fa-history"></i> History</h3>
+                        <button id="clearHistoryBtn" class="btn-icon" title="Clear History">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                    <div id="historyList" class="history-list">
+                        <!-- History will be dynamically displayed here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Center Content -->
+            <div class="center-content">
+                <!-- Request Tabs -->
+                <div class="request-tabs">
+                    <div class="tab-buttons">
+                        <button class="tab-btn active" data-tab="params">
+                            <i class="fas fa-link"></i> Params
+                        </button>
+                        <button class="tab-btn" data-tab="headers">
+                            <i class="fas fa-list"></i> Headers
+                        </button>
+                        <button class="tab-btn" data-tab="body">
+                            <i class="fas fa-file-alt"></i> Body
+                        </button>
+                        <button class="tab-btn" data-tab="auth">
+                            <i class="fas fa-lock"></i> Auth
+                        </button>
+                        <button class="tab-btn" data-tab="tests">
+                            <i class="fas fa-code"></i> Tests
+                        </button>
+                    </div>
+
+                    <!-- Params Tab -->
+                    <div class="tab-content active" id="params-tab">
+                        <div class="params-container">
+                            <div class="params-header">
+                                <span>Query Parameters</span>
+                                <button id="addParamBtn" class="btn-secondary">
+                                    <i class="fas fa-plus"></i> Add Parameter
+                                </button>
+                            </div>
+                            <div id="paramsList" class="params-list">
+                                <!-- Parameters will be dynamically displayed here -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Headers Tab -->
+                    <div class="tab-content" id="headers-tab">
+                        <div class="headers-container">
+                            <div class="headers-header">
+                                <span>Headers</span>
+                                <button id="addHeaderBtn" class="btn-secondary">
+                                    <i class="fas fa-plus"></i> Add Header
+                                </button>
+                            </div>
+                            <div id="headersList" class="headers-list">
+                                <!-- Headers will be dynamically displayed here -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Body Tab -->
+                    <div class="tab-content" id="body-tab">
+                        <div class="body-container">
+                            <div class="body-type-selector">
+                                <label class="radio-label">
+                                    <input type="radio" name="bodyType" value="none" checked>
+                                    <span>None</span>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="bodyType" value="json">
+                                    <span>JSON</span>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="bodyType" value="form">
+                                    <span>Form Data</span>
+                                </label>
+                                <label class="radio-label">
+                                    <input type="radio" name="bodyType" value="raw">
+                                    <span>Raw</span>
+                                </label>
+                            </div>
+                            
+                            <div id="bodyContent" class="body-content">
+                                <!-- Body content will be dynamically displayed here -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Auth Tab -->
+                    <div class="tab-content" id="auth-tab">
+                        <div class="auth-container">
+                            <div class="auth-type-selector">
+                                <select id="authTypeSelect" class="auth-select">
+                                    <option value="none">No Auth</option>
+                                    <option value="bearer">Bearer Token</option>
+                                    <option value="basic">Basic Auth</option>
+                                    <option value="apiKey">API Key</option>
+                                </select>
+                            </div>
+                            
+                            <div id="authContent" class="auth-content">
+                                <!-- Auth content will be dynamically displayed here -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tests Tab -->
+                    <div class="tab-content" id="tests-tab">
+                        <div class="tests-container">
+                            <div class="tests-header">
+                                <span>Test Script</span>
+                                <button id="addTestBtn" class="btn-secondary">
+                                    <i class="fas fa-plus"></i> Add Test
+                                </button>
+                            </div>
+                            <textarea id="testScript" class="test-script" placeholder="// Write test script here..."></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Sidebar - Response -->
+            <div class="right-sidebar">
+                <div class="response-header">
+                    <h3><i class="fas fa-reply"></i> Response</h3>
+                    <div class="response-actions">
+                        <button id="copyResponseBtn" class="btn-icon" title="Copy Response">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                        <button id="downloadResponseBtn" class="btn-icon" title="Download Response">
+                            <i class="fas fa-download"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="response-info">
+                    <div class="response-status">
+                        <span class="status-label">Status:</span>
+                        <span id="responseStatus" class="status-code">-</span>
+                    </div>
+                    <div class="response-time">
+                        <span class="time-label">Time:</span>
+                        <span id="responseTime" class="time-value">-</span>
+                    </div>
+                    <div class="response-size">
+                        <span class="size-label">Size:</span>
+                        <span id="responseSize" class="size-value">-</span>
+                    </div>
+                </div>
+
+                <div class="response-tabs">
+                    <div class="tab-buttons">
+                        <button class="tab-btn active" data-tab="response-body">
+                            <i class="fas fa-file-code"></i> Body
+                        </button>
+                        <button class="tab-btn" data-tab="response-headers">
+                            <i class="fas fa-list"></i> Headers
+                        </button>
+                        <button class="tab-btn" data-tab="response-cookies">
+                            <i class="fas fa-cookie-bite"></i> Cookies
+                        </button>
+                    </div>
+
+                    <div class="tab-content active" id="response-body-tab">
+                        <div id="responseBody" class="response-body">
+                            <!-- Response body will be displayed here -->
+                        </div>
+                    </div>
+
+                    <div class="tab-content" id="response-headers-tab">
+                        <div id="responseHeaders" class="response-headers">
+                            <!-- Response headers will be displayed here -->
+                        </div>
+                    </div>
+
+                    <div class="tab-content" id="response-cookies-tab">
+                        <div id="responseCookies" class="response-cookies">
+                            <!-- Cookies will be displayed here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Title</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Modal content -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast" class="toast"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/javascript/javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/xml/xml.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html> 
